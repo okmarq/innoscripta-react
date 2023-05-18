@@ -1,8 +1,7 @@
-import React from 'react'
 import logo from '../assets/img/core-img/logo.png'
 import { Link } from 'react-router-dom'
 
-export const Footer = () => {
+function Footer() {
     return (
         <footer className="footer-area">
             <div className="main-footer-area">
@@ -55,3 +54,5 @@ export const Footer = () => {
         </footer>
     )
 }
+
+export default Footer

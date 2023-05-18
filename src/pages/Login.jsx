@@ -1,25 +1,47 @@
-import React, { useState } from 'react';
-import ApiService from '../services/ApiService';
-import App from '../App';
+import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AppContext } from '../services/AppContext'
+import ApiService from '../services/ApiService'
 
-const Login = () => {
-    const [login, setLogin] = useState({
+function Login() {
+    const auth = useContext(AppContext)
+
+    const { user, setUser, setToken, setIsAuth } = auth
+
+    const navigate = useNavigate()
+
+    const [loginData, setLogin] = useState({
         email: '',
-        password: '',
-    });
+        password: ''
+    })
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (user) {
+            setIsAuth(true)
+            navigate('/')
+        }
+    }, [user, setIsAuth, navigate])
 
-        const response = ApiService.login(login)
-        // Handle successful login
-        response.then(console.log(response.data))
-            // Handle login error
-            .catch(error => console.log(error.response.data));
-    };
+    function handleSubmit(e) {
+        e.preventDefault()
+
+        ApiService.login(loginData)
+            .then(({ data }) => {
+                setUser(data.user)
+                setToken(data.token)
+            })
+            .catch((error) => {
+                console.error(error.response)
+            })
+
+        setLogin({
+            email: '',
+            password: ''
+        })
+    }
 
     return (
-        <App>
+        <>
             <div className="popular-news-area section-padding-80-50">
                 <div className="container">
                     <div className="row">
@@ -34,14 +56,16 @@ const Login = () => {
                                     <input
                                         type="email"
                                         placeholder="Email"
-                                        value={login.email}
-                                        onChange={(e) => setLogin({ ...login, email: e.target.value })}
+                                        required
+                                        value={loginData.email}
+                                        onChange={(e) => setLogin({ ...loginData, email: e.target.value })}
                                     />
                                     <input
                                         type="password"
                                         placeholder="Password"
-                                        value={login.password}
-                                        onChange={(e) => setLogin({ ...login, password: e.target.value })}
+                                        required
+                                        value={loginData.password}
+                                        onChange={(e) => setLogin({ ...loginData, password: e.target.value })}
                                     />
                                     <button type="submit" className="btn w-100">Login</button>
                                 </form>
@@ -50,8 +74,8 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-        </App>
-    );
-};
+        </>
+    )
+}
 
-export default Login;
+export default Login

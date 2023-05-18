@@ -1,28 +1,56 @@
-import React, { useState } from 'react';
-import ApiService from '../services/ApiService';
-import App from '../App';
+import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import '../App.css'
+import { AppContext } from '../services/AppContext'
+import ApiService from '../services/ApiService'
 
-const Register = () => {
-    const [register, setRegister] = useState({
+function Register() {
+    const auth = useContext(AppContext)
+
+    const { user, setUser, setToken, setIsAuth } = auth
+
+    const navigate = useNavigate()
+
+    const [registerData, setRegister] = useState({
         first_name: '',
         last_name: '',
         email: '',
         password: '',
-        password_confirmation: '',
-    });
+        password_confirmation: ''
+    })
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (user) {
+            setIsAuth(true)
+            navigate('/')
+        }
+    }, [user, setIsAuth, navigate])
 
-        const response = ApiService.register(register)
-        // Handle successful registration
-        response.then(console.log(response.data))
-            // Handle registration error
-            .catch(error => console.log(error.response.data))
-    };
+    function handleSubmit(e) {
+        e.preventDefault()
+
+        if (registerData.password === registerData.password_confirmation) {
+            ApiService.register(registerData)
+                .then(({ data }) => {
+                    setUser(data.user)
+                    setToken(data.token)
+                })
+                .catch((error) => {
+                    console.error(error.response)
+                })
+
+            setRegister({
+                first_name: '',
+                last_name: '',
+                email: '',
+                password: '',
+                password_confirmation: ''
+            })
+        }
+    }
 
     return (
-        <App>
+        <>
             <div className="popular-news-area section-padding-80-50">
                 <div className="container">
                     <div className="row">
@@ -37,32 +65,38 @@ const Register = () => {
                                     <input
                                         type="text"
                                         placeholder="First Name"
-                                        value={register.first_name}
-                                        onChange={(e) => setRegister({ ...register, first_name: e.target.value })}
+                                        value={registerData.first_name}
+                                        required
+                                        onChange={(e) => setRegister({ ...registerData, first_name: e.target.value })}
                                     />
                                     <input
                                         type="text"
                                         placeholder="Last Name"
-                                        value={register.last_name}
-                                        onChange={(e) => setRegister({ ...register, last_name: e.target.value })}
+                                        value={registerData.last_name}
+                                        required
+                                        onChange={(e) => setRegister({ ...registerData, last_name: e.target.value })}
                                     />
                                     <input
                                         type="email"
                                         placeholder="Email"
-                                        value={register.email}
-                                        onChange={(e) => setRegister({ ...register, email: e.target.value })}
+                                        value={registerData.email}
+                                        required
+                                        onChange={(e) => setRegister({ ...registerData, email: e.target.value })}
                                     />
                                     <input
                                         type="password"
                                         placeholder="Password"
-                                        value={register.password}
-                                        onChange={(e) => setRegister({ ...register, password: e.target.value })}
+                                        value={registerData.password}
+                                        required
+                                        onChange={(e) => setRegister({ ...registerData, password: e.target.value })}
                                     />
+                                    {/* <small id='password_confirmation' className={textWhite ? 'text-white' : 'd-none'}>password doesn't match</small> */}
                                     <input
                                         type="password"
                                         placeholder="Confirm Password"
-                                        value={register.password_confirmation}
-                                        onChange={(e) => setRegister({ ...register, password_confirmation: e.target.value })}
+                                        value={registerData.password_confirmation}
+                                        required
+                                        onChange={(e) => setRegister({ ...registerData, password_confirmation: e.target.value })}
                                     />
                                     <button type="submit" className="btn w-100">Register</button>
                                 </form>
@@ -71,8 +105,8 @@ const Register = () => {
                     </div>
                 </div>
             </div>
-        </App>
+        </>
     )
 }
 
-export default Register;
+export default Register

@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import ApiService from '../services/ApiService'
-import App from '../App'
+import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import like from '../assets/img/core-img/like.png'
 import chat from '../assets/img/core-img/chat.png'
@@ -17,36 +15,59 @@ import img21 from '../assets/img/bg-img/21.jpg'
 import img22 from '../assets/img/bg-img/22.jpg'
 import img23 from '../assets/img/bg-img/23.jpg'
 import img24 from '../assets/img/bg-img/24.jpg'
+import { AppContext } from '../services/AppContext'
+import ApiService from '../services/ApiService'
 
-const Articles = () => {
-    const [articles, setArticles] = useState([]);
+function Articles() {
+    const auth = useContext(AppContext)
 
-    useEffect(() => {
-        const response = ApiService.articles()
-        // Handle successful article retrieval
-        response.then(setArticles(response.data))
-            // Handle article retrieval error
-            .catch(error => console.log(error.response.data))
-    }, [])
+    const { token, savePreference, articles, setArticles, setPreference } = auth
 
+    const [isTrigger, setIsTriger] = useState(false)
     const [preferences, setPreferences] = useState({
         category: '',
         source: '',
-        author: '',
-    });
+        author: ''
+    })
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (token || isTrigger) {
+            console.log(token)
+            setIsTriger(false)
 
-        const response = ApiService.preferences(preferences);
-        // Handle successful preferences update
-        response.then(console.log(response.data))
-            // Handle preferences update error
-            .catch(error => console.log(error.response.data))
-    };
+            ApiService.getArticles(token)
+                .then(({ data }) => {
+                    setArticles(data)
+                })
+                .catch((error) => {
+                    console.error(error.response)
+                })
+        }
+    }, [token, setArticles, isTrigger])
+
+    function handleSubmit(e) {
+        e.preventDefault()
+
+        savePreference(preferences, token)
+
+        ApiService.savePreference(preferences, token)
+            .then(({ data }) => {
+                setPreference(data)
+                setIsTriger(true)
+            })
+            .catch((error) => {
+                console.error(error.response)
+            })
+
+        setPreferences({
+            category: '',
+            source: '',
+            author: ''
+        })
+    }
 
     return (
-        <App>
+        <>
             <div>
                 <h2>Articles</h2>
                 {articles?.map((article) => (
@@ -395,8 +416,8 @@ const Articles = () => {
                     </div>
                 </div>
             </div>
-        </App>
-    );
-};
+        </>
+    )
+}
 
-export default Articles;
+export default Articles

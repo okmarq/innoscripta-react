@@ -1,29 +1,71 @@
-import React, { useState } from 'react'
-import ApiService from '../services/ApiService';
+/* eslint-disable react/prop-types */
 import { Navbar } from './Navbar'
 import logo from '../assets/img/core-img/logo.png'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react'
+import { AppContext } from '../services/AppContext'
+import ApiService from '../services/ApiService'
 
-export const Header = () => {
-    const [search, setSearch] = useState({
+function Header() {
+    const auth = useContext(AppContext)
+
+    const { token, isAuth, setArticles, setToken, setIsAuth, setUser } = auth
+
+    const navigate = useNavigate()
+
+    const [isTrigger, setIsTriger] = useState(false)
+    const [searchData, setSearch] = useState({
         keyword: ''
     })
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (token || isTrigger) {
+            setIsTriger(false)
 
-        const response = ApiService.search(search);
+            ApiService.getArticles(token)
+                .then(({ data }) => {
+                    setArticles(data)
+                })
+                .catch((error) => {
+                    console.error(error.response)
+                })
+        }
+    }, [token, setArticles, isTrigger])
 
-        // Handle successful preferences update
-        response.then(console.log(response.data))
-            // Handle preferences update error
-            .catch(error => console.log(error.response.data))
-    };
+    function handleSubmit(e) {
+        e.preventDefault()
 
+        ApiService.search(searchData, token)
+            .then(({ data }) => {
+                setArticles(data)
+                setIsTriger(true)
+            })
+            .catch((error) => {
+                console.error(error.response)
+            })
+
+        setSearch({ keyword: '' })
+
+        navigate('/articles')
+    }
+
+    function handleLogout() {
+        ApiService.logout(token)
+            .then(() => {
+                setToken(null)
+                setIsAuth(false)
+                setUser(null)
+            })
+            .catch((error) => {
+                console.error(error.response)
+            })
+
+        navigate('/login')
+    }
 
     return (
         <header className="header-area">
-
             <div className="top-header-area">
                 <div className="container">
                     <div className="row">
@@ -39,14 +81,20 @@ export const Header = () => {
                                 <div className="login-search-area d-flex align-items-center">
 
                                     <div className="login d-flex">
-                                        <Link to='/login'>Login</Link>
-                                        <Link to='/register'>Register</Link>
+                                        {isAuth ? (
+                                            <a href='#' onClick={() => handleLogout()}>Logout</a>
+                                        ) : (
+                                            <>
+                                                <Link to='/login'>Login</Link>
+                                                <Link to='/register'>Register</Link>
+                                            </>
+                                        )}
                                     </div>
 
                                     <div className="search-form">
                                         <form onSubmit={handleSubmit}>
-                                            <input type="search" value={search.keyword} onChange={(e) =>
-                                                setSearch({ ...search, keyword: e.target.value })
+                                            <input type="search" value={searchData.keyword} onChange={(e) =>
+                                                setSearch({ ...searchData, keyword: e.target.value })
                                             } name="search" className="form-control" placeholder="Search" />
                                             <button type="submit"><i className="fa fa-search" aria-hidden="true"></i></button>
                                         </form>
@@ -61,3 +109,5 @@ export const Header = () => {
         </header>
     )
 }
+
+export default Header

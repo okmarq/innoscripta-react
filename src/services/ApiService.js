@@ -1,78 +1,40 @@
-
-import axios from 'axios';
+import axios from 'axios'
 
 const apiClient = axios.create({
-    baseURL: 'https://projects.test/innoscripta/innoscripta-laravel/public/api/',
-    withCredentials: false,
+    baseURL: 'https://projects.test/innoscripta/innoscripta-laravel/public/',
+    // withCredentials: true,
     headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${user.token}`,
     }
 })
 
-/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
-    async register(payload) {
-        try {
-            return await apiClient.post('register', payload)
-        } catch (error) {
-            console.error(error)
-            return error
-        }
+    register(payload) {
+        return apiClient.post('api/register', payload)
     },
 
-    async login(payload) {
-        try {
-            return await apiClient.post('login', payload)
-        } catch (error) {
-            console.error(error)
-            return error
-        }
+    login(payload) {
+        return apiClient.post('api/login', payload)
     },
 
-    async logout(payload) {
-        try {
-            return await apiClient.post('logout', payload)
-        } catch (error) {
-            console.error(error)
-            return error
-        }
+    logout(token) {
+        apiClient.defaults.headers.common['Authorization'] = token
+        return apiClient.post('api/logout')
     },
 
-    async articles() {
-        try {
-            return await apiClient.get('articles')
-        } catch (error) {
-            console.error(error)
-            return error
-        }
+    savePreference(payload, token) {
+        apiClient.defaults.headers.common['Authorization'] = token
+        return apiClient.post('api/preference/save', payload)
     },
 
-    async preferences() {
-        try {
-            return await apiClient.get('preferences')
-        } catch (error) {
-            console.error(error)
-            return error
-        }
+    getArticles(token) {
+        apiClient.defaults.headers.common['Authorization'] = token
+        return apiClient.get('api/articles')
     },
 
-    async search(payload) {
-        try {
-            return await apiClient.post('search', payload)
-        } catch (error) {
-            console.error(error)
-            return error
-        }
-    },
-
-    async savePreference() {
-        try {
-            return await apiClient.get('preference/save')
-        } catch (error) {
-            console.error(error)
-            return error
-        }
+    search(payload, token) {
+        apiClient.defaults.headers.common['Authorization'] = token
+        return apiClient.post('api/article/search', payload)
     }
 }

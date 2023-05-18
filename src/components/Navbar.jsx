@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-export const Navbar = () => {
+function Navbar() {
     const [activeLink, setActiveLink] = useState('');
 
     const handleLinkClick = (link) => {
@@ -34,9 +34,6 @@ export const Navbar = () => {
                                     <li className={activeLink === '/' ? 'active' : ''}>
                                         <Link to='/' onClick={() => handleLinkClick('/')}>Home</Link>
                                     </li>
-                                    {/* <li className={activeLink === 'article' ? 'active' : ''}>
-                                        <Link to='/article' onClick={() => handleLinkClick('article')}>Article</Link>
-                                    </li> */}
                                 </ul>
                             </div>
 
@@ -47,3 +44,5 @@ export const Navbar = () => {
         </div>
     )
 }
+
+export default Navbar
