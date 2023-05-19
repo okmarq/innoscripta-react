@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import { Navbar } from './Navbar'
+import Navbar from './Navbar'
 import logo from '../assets/img/core-img/logo.png'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { AppContext } from '../services/AppContext'
 import ApiService from '../services/ApiService'
 
@@ -16,38 +16,32 @@ function Header() {
 
     const [isTrigger, setIsTriger] = useState(false)
     const [searchData, setSearch] = useState({
-        keyword: ''
+        keyword: '',
+        date: '',
+        category: '',
+        source: ''
     })
-
-    useEffect(() => {
-        if (token || isTrigger) {
-            setIsTriger(false)
-
-            ApiService.getArticles(token)
-                .then(({ data }) => {
-                    setArticles(data)
-                })
-                .catch((error) => {
-                    console.error(error.response)
-                })
-        }
-    }, [token, setArticles, isTrigger])
 
     function handleSubmit(e) {
         e.preventDefault()
 
         ApiService.search(searchData, token)
             .then(({ data }) => {
-                setArticles(data)
+                setArticles(data.data)
                 setIsTriger(true)
+
+                navigate('/articles')
             })
             .catch((error) => {
                 console.error(error.response)
             })
 
-        setSearch({ keyword: '' })
-
-        navigate('/articles')
+        setSearch({
+            keyword: '',
+            date: '',
+            category: '',
+            source: ''
+        })
     }
 
     function handleLogout() {
@@ -56,12 +50,12 @@ function Header() {
                 setToken(null)
                 setIsAuth(false)
                 setUser(null)
+
+                navigate('/login')
             })
             .catch((error) => {
                 console.error(error.response)
             })
-
-        navigate('/login')
     }
 
     return (
@@ -105,6 +99,7 @@ function Header() {
                     </div>
                 </div>
             </div>
+
             <Navbar />
         </header>
     )

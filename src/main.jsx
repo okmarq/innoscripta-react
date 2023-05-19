@@ -8,7 +8,6 @@ import './index.css'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Articles from './pages/Articles'
-import Article from './pages/Article'
 import App from './App'
 
 const router = createBrowserRouter([
@@ -23,10 +22,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App><Articles /></App>,
-  },
-  {
-    path: "article",
-    element: <App><Article /></App>,
   },
 ]);
 

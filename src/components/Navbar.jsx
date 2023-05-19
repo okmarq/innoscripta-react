@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function Navbar() {
-    const [activeLink, setActiveLink] = useState('');
+    const [activeLink, setActiveLink] = useState('')
 
     const handleLinkClick = (link) => {
-        setActiveLink(link);
-    };
+        setActiveLink(link)
+    }
 
     return (
         <div className="newspaper-main-menu" id="stickyMenu">
