@@ -29,7 +29,7 @@ function Header() {
                 setArticles(data.data)
                 setIsTriger(true)
 
-                navigate('/articles')
+                navigate('/')
             })
             .catch((error) => {
                 console.error(error)
