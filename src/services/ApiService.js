@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-    baseURL: 'https://projects.test/innoscripta/innoscripta-laravel/public/',
+    baseURL: 'http://localhost:8000/',
     headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',

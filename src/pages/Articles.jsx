@@ -30,7 +30,7 @@ function Articles() {
                     setArticles(data.data)
                 })
                 .catch((error) => {
-                    console.error(error.response)
+                    console.error(error)
                 })
         }
     }, [token, setArticles, isTrigger])
@@ -56,7 +56,7 @@ function Articles() {
                 setIsTriger(true)
             })
             .catch((error) => {
-                console.error(error.response)
+                console.error(error)
             })
 
         setPreferences({
@@ -85,7 +85,7 @@ function Articles() {
                 setIsTriger(true)
             })
             .catch((error) => {
-                console.error(error.response)
+                console.error(error)
             })
 
         setFilter({
@@ -108,7 +108,7 @@ function Articles() {
                                 <h6>Articles</h6>
                             </div>
 
-                            {articles?.map((article) => (
+                            {(articles.length)? articles.map((article) => (
                                 <div key={article.id} className="col-md-6 col-lg-6">
                                     <div className="single-blog-post small-featured-post d-flex">
                                         <div className="post-thumb">
@@ -131,7 +131,7 @@ function Articles() {
                                         </div>
                                     </div>
                                 </div>
-                            )) ?? <p className="post-date">No articlesfound!<br />Search for new articles above</p>}
+                            )): <p className="post-date">No article found!<br />Search for new articles above<br />or use the filter form both to search and apply filters</p>}
                         </div>
 
                         <div className='col-12 col-lg-4'>

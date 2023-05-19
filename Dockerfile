@@ -4,20 +4,17 @@ FROM node:14-alpine
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY innoscripta-react/package*.json ./
+# Copy package.json and yarn.lock to the container
+COPY innoscripta-react/package.json innoscripta-react/yarn.lock ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install project dependencies with Yarn
+RUN yarn install --frozen-lockfile
 
 # Copy the application files
 COPY innoscripta-react ./
 
-# Build the React app
-RUN npm run build
-
-# Expose port 3000
-EXPOSE 3000
+# Expose port 5173
+EXPOSE 5173
 
 # Start the React app
-CMD ["npm", "start"]
+CMD ["yarn", "dev"]

@@ -36,7 +36,7 @@ function Register() {
                     setToken(data.token)
                 })
                 .catch((error) => {
-                    console.error(error.response)
+                    console.error(error)
                 })
 
             setRegister({

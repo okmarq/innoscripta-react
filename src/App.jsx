@@ -9,7 +9,7 @@ function App({ children }) {
   const [isAuth, setIsAuth] = useState(false)
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
-  const [articles, setArticles] = useState(null)
+  const [articles, setArticles] = useState([])
 
   const value = { user, setUser, token, setToken, isAuth, setIsAuth, articles, setArticles }
 

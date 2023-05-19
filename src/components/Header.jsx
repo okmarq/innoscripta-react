@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import Navbar from './Navbar'
 import logo from '../assets/img/core-img/logo.png'
 import { Link } from 'react-router-dom'
@@ -33,7 +32,7 @@ function Header() {
                 navigate('/articles')
             })
             .catch((error) => {
-                console.error(error.response)
+                console.error(error)
             })
 
         setSearch({
@@ -54,7 +53,7 @@ function Header() {
                 navigate('/login')
             })
             .catch((error) => {
-                console.error(error.response)
+                console.error(error)
             })
     }
 
